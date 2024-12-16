@@ -45,6 +45,7 @@ model Gym {
   phone       String?
   latitude    Decimal
   longitude   Decimal
+  created_at  DateTime  @default(now())
   CheckIns    CheckIn[]
 
   @@map("gyms")
