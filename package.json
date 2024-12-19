@@ -14,7 +14,8 @@
     "test:e2e": "vitest run --dir src/http",
     "test:e2e:watch": "vitest --dir src/http",
     "test:coverage": "vitest run --coverage",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "docker": "docker desktop start && docker compose up -d"
   },
   "keywords": [],
   "author": "",
