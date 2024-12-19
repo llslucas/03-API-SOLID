@@ -8,10 +8,10 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
   });
 
   const createCheckInBodySchema = z.object({
-    userLatitude: z.number().refine((value) => {
+    userLatitude: z.coerce.number().refine((value) => {
       return Math.abs(value) <= 90;
     }),
-    userLongitude: z.number().refine((value) => {
+    userLongitude: z.coerce.number().refine((value) => {
       return Math.abs(value) <= 180;
     }),
   });
@@ -24,13 +24,15 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
 
   const checkInUseCase = makeCheckInUseCase();
 
-  await checkInUseCase.execute({
+  const { checkIn } = await checkInUseCase.execute({
     userId: request.user.sub,
     gymId,
     userLatitude,
     userLongitude,
   });
 
-  return reply.status(201).send();
+  return reply.status(201).send({
+    checkIn,
+  });
 }
 
