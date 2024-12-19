@@ -26,7 +26,9 @@ describe("Check-ins History (e2e)", () => {
   });
 
   it("should be able to fetch the check-in history.", async () => {
-    const { token } = await createAndAuthenticateUser(app);
+    vi.setSystemTime(new Date(2024, 11, 19, 14, 0, 0));
+
+    const { token, cookies } = await createAndAuthenticateUser(app);
 
     const createGymResponse = await request(app.server)
       .post("/gyms")
@@ -41,8 +43,6 @@ describe("Check-ins History (e2e)", () => {
 
     const { gym } = createGymResponse.body;
 
-    vi.setSystemTime(new Date(2024, 11, 19, 14, 0, 0));
-
     await request(app.server)
       .post(`/gyms/${gym.id}/check-in`)
       .set("Authorization", `Bearer ${token}`)
@@ -53,9 +53,16 @@ describe("Check-ins History (e2e)", () => {
 
     vi.setSystemTime(new Date(2024, 11, 20, 14, 0, 0));
 
+    const refreshTokenResponse = await request(app.server)
+      .patch("/token/refresh")
+      .set("Cookie", cookies)
+      .send();
+
+    const { token: refreshedToken } = refreshTokenResponse.body;
+
     await request(app.server)
       .post(`/gyms/${gym.id}/check-in`)
-      .set("Authorization", `Bearer ${token}`)
+      .set("Authorization", `Bearer ${refreshedToken}`)
       .send({
         userLatitude: -22.0552742,
         userLongitude: -46.965172,
@@ -63,7 +70,7 @@ describe("Check-ins History (e2e)", () => {
 
     const response = await request(app.server)
       .get(`/check-ins/history`)
-      .set("Authorization", `Bearer ${token}`)
+      .set("Authorization", `Bearer ${refreshedToken}`)
       .send();
 
     expect(response.statusCode).toEqual(200);
