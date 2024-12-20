@@ -28,7 +28,7 @@ describe("Check-ins History (e2e)", () => {
   it("should be able to fetch the check-in history.", async () => {
     vi.setSystemTime(new Date(2024, 11, 19, 14, 0, 0));
 
-    const { token, cookies } = await createAndAuthenticateUser(app);
+    const { token, cookies } = await createAndAuthenticateUser(app, true);
 
     const createGymResponse = await request(app.server)
       .post("/gyms")
@@ -51,7 +51,7 @@ describe("Check-ins History (e2e)", () => {
         userLongitude: -46.965172,
       });
 
-    vi.setSystemTime(new Date(2024, 11, 20, 14, 0, 0));
+    vi.setSystemTime(new Date(2024, 11, 21, 14, 0, 0));
 
     const refreshTokenResponse = await request(app.server)
       .patch("/token/refresh")
